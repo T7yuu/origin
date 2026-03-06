@@ -1,0 +1,41 @@
+
+
+data_paths:
+  input_image_dir: "D:/Datasets/ISIC2018/test/images_compressed"
+  output_mask_dir: "D:/Datasets/ISIC2018/test/results"
+  ground_truth_mask_dir: "D:/Datasets/ISIC2018/test/groundtruth"
+  metrics_output_file: "D:/Codes/PaperCodes/AAAI_v2/scripts/V9/outputs/metrics.txt"
+  output_dir: "D:/Codes/PaperCodes/AAAI_v2/scripts/V9/outputs"
+  log_file: "D:/Codes/PaperCodes/AAAI_v2/scripts/V9/outputs/logs/main_process.log"
+  knowledge_base_json: "D:/Codes/PaperCodes/AAAI_v2/scripts/V9/scripts/unified_medical_kb.json"
+  feature_matrix_path: "D:/Codes/PaperCodes/AAAI_v2/scripts/V9/scripts/scripts/outputs_medical/medical_features.npz"
+
+evaluation_configs:
+  enable_visualization: false
+  visualization_sample_ratio: 0.1
+  results_filename: "results_medical_bruteforce_search.json"
+
+model_configs:
+  encoder: "blip_feature_extractor"
+  encoder_model_type: "base"
+  reasoning_engine:
+    model_path: "D:/Codes/PaperCodes/AAAI_v2/Qwen/Qwen2.5-VL-7B-Instruct"
+    use_int8: True
+    use_flash_attention_2: false
+  sam2:
+    root_dir: "D:/Codes/PaperCodes/AAAI_v2/sam2"
+    checkpoint: "D:/Codes/PaperCodes/AAAI_v2/sam2/sam2.1_hiera_base_plus.pt"
+    model_cfg: "D:/Codes/PaperCodes/AAAI_v2/sam2/config-msd.yaml"
+
+faiss_configs:
+  feature_dim: 256
+
+retrieval_configs:
+  image_text_weight: 1
+  size_similarity_weight: 0.1
+  top_k: 6
+
+logic_thresholds:
+  tier1_direct_mapping_similarity: 0.95
+  tier2_fallback_similarity: 0.85
+  box_expansion_ratio: 1.0
