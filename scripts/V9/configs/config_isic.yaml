@@ -1,15 +1,15 @@
 
 
 data_paths:
-  input_image_dir: "D:/Datasets/ISIC2018/test/images_compressed"
-  output_mask_dir: "D:/Datasets/ISIC2018/test/results"
-  ground_truth_mask_dir: "D:/Datasets/ISIC2018/test/groundtruth"
-  metrics_output_file: "D:/Codes/PaperCodes/AAAI_v2/scripts/V9/outputs/metrics.txt"
-  output_dir: "D:/Codes/PaperCodes/AAAI_v2/scripts/V9/outputs"
-  log_file: "D:/Codes/PaperCodes/AAAI_v2/scripts/V9/outputs/logs/main_process.log"
-  knowledge_base_json: "D:/Codes/PaperCodes/AAAI_v2/scripts/V9/scripts/unified_medical_kb.json"
-  feature_matrix_path: "D:/Codes/PaperCodes/AAAI_v2/scripts/V9/scripts/scripts/outputs_medical/medical_features.npz"
-
+  input_image_dir: "E:/Datasets/ISIC2018/test/images_compressed"
+  output_mask_dir: "E:/Datasets/ISIC2018/test/results"
+  ground_truth_mask_dir: "E:/Datasets/ISIC2018/test/groundtruth"
+  metrics_output_file: "E:/PythonD/ERA/scripts/V9/outputs/metrics.txt"
+  output_dir: "E:/PythonD/ERA/scripts/V9/outputs"     #运行结果
+  log_file: "E:/PythonD/ERA/scripts/V9/outputs/logs/main_process.log"     #日志
+  knowledge_base_json: "E:/PythonD/ERA/scripts/V9/scripts/unified_medical_kb.json"
+  feature_matrix_path: "E:/PythonD/ERA/scripts/V9/scirpts/outputs_medical/medical_features.npz"
+   #knowledge_base_json 和 feature_matrix_path：这两项指向 RAG（检索增强）的知识库。如果你还没运行构建知识库的脚本，需要先指定好未来生成的 json 和 npz 文件存放位置。
 evaluation_configs:
   enable_visualization: false
   visualization_sample_ratio: 0.1
@@ -19,13 +19,14 @@ model_configs:
   encoder: "blip_feature_extractor"
   encoder_model_type: "base"
   reasoning_engine:
-    model_path: "D:/Codes/PaperCodes/AAAI_v2/Qwen/Qwen2.5-VL-7B-Instruct"
+    model_path: "E:/PythonD/ERA/Qwen/Qwen2.5-VL-7B-Instruct"
+
     use_int8: True
     use_flash_attention_2: false
   sam2:
-    root_dir: "D:/Codes/PaperCodes/AAAI_v2/sam2"
-    checkpoint: "D:/Codes/PaperCodes/AAAI_v2/sam2/sam2.1_hiera_base_plus.pt"
-    model_cfg: "D:/Codes/PaperCodes/AAAI_v2/sam2/config-msd.yaml"
+    root_dir: "E:/PythonD/ERA/sam2"
+    checkpoint: "E:/PythonD/ERA/sam2/sam2.1_hiera_base_plus.pt"
+    model_cfg: "E:/PythonD/ERA/sam2/config.yaml"
 
 faiss_configs:
   feature_dim: 256
