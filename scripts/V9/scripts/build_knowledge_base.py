@@ -7,9 +7,9 @@ from PIL import Image
 from tqdm import tqdm
 from pathlib import Path
 
-ROOT_DATA_DIR = r"D:\Datasets"
+ROOT_DATA_DIR = r"E:\Datasets"
 
-DATASET_CONFIGS = [
+'''DATASET_CONFIGS = [
 
     {
         "type": "msd",
@@ -42,15 +42,22 @@ DATASET_CONFIGS = [
         "path": r"ISIC2018",
         "text_label": "皮肤上的黑色斑块"
     },
-
     {
         "type": "brats",
         "name": "BraTS2021",
         "path": r"BraTS\BraTS2021",
         "text_label": "脑肿瘤影像"
     }
-]
+]'''
 
+DATASET_CONFIGS = [
+    {
+        "type": "isic",
+        "name": "ISIC2018",
+        "path": r"ISIC2018",
+        "text_label": "皮肤上的黑色斑块"
+    }
+]
 
 OUTPUT_JSON_PATH = "./unified_medical_kb.json"
 
@@ -125,7 +132,7 @@ def process_isic_dataset(config):
 
             image_path = os.path.join(images_dir, image_filename)
             base_name = Path(image_filename).stem
-            mask_filename = f"{base_name}.jpg"  # ISIC的文件名映射规则
+            mask_filename = f"{base_name}_segmentation.png"
             mask_path = os.path.join(groundtruth_dir, mask_filename)
 
             if os.path.exists(mask_path):
