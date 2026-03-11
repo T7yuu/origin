@@ -1,7 +1,6 @@
-
-
-import os
 import sys
+import os
+from pathlib import Path
 import time
 from pathlib import Path
 from typing import Dict, Optional
@@ -11,6 +10,14 @@ import torch
 from PIL import Image
 from tqdm import tqdm
 
+# 1. 强制添加 sam2 源码路径（指向你改名后的文件夹）
+sam2_repo_path = r"E:\PythonD\ERA\sam2_code"
+if sam2_repo_path not in sys.path:
+    sys.path.insert(0, sam2_repo_path)
+
+# 2. 移除当前目录干扰，防止触发 RuntimeError
+if os.getcwd() in sys.path:
+    sys.path.remove(os.getcwd())
 
 try:
     from sam2.build_sam import build_sam2
@@ -20,14 +27,14 @@ except ImportError as e:
     raise e
 
 
-IMAGE_DIR = Path(r"D:\Datasets\BraTS\BraTS_test\images")
-PROMPT_DIR = Path(r"D:\Datasets\prompt\Groundingdino\GroundingDino\BrainTS")
-GT_DIR = Path(r"D:\Datasets\BraTS\BraTS_test\masks")
-OUTPUT_DIR = Path(r"D:\Datasets\results\GroundingDINO\BrainTS")
+IMAGE_DIR = Path(r"E:/Datasets/ISIC2018/test/images_compressed")
+PROMPT_DIR = Path(r"E:/Datasets/ISIC2018/test/prompts")
+GT_DIR = Path(r"E:/Datasets/ISIC2018/test/groundtruth")
+OUTPUT_DIR = Path(r"E:/PythonD/ERA/scripts/V9/outputs")
 
 
-SAM2_MODEL_CFG = Path(r"D:\Codes\PaperCodes\AAAI_v2\sam2\config.yaml")
-SAM2_CHECKPOINT = Path(r"D:\Codes\PaperCodes\AAAI_v2\sam2\sam2.1_hiera_base_plus.pt")
+SAM2_MODEL_CFG = Path(r"E:\PythonD\ERA\sam2_weights\config.yaml")
+SAM2_CHECKPOINT = Path(r"E:\PythonD\ERA\sam2_weights\sam2.1_hiera_base_plus.pt")
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
 
@@ -39,8 +46,9 @@ def calculate_iou(mask1: np.ndarray, mask2: np.ndarray) -> float:
     return intersection / (union + epsilon)
 
 
+'''
 def calculate_metrics_from_totals(tp_total, fp_total, fn_total, tn_total) -> Dict[str, float]:
-    epsilon = 1e-8
+   epsilon = 1e-8
     macro_dice = (2. * tp_total) / (2 * tp_total + fp_total + fn_total + epsilon)
     macro_union = tp_total + fp_total + fn_total
     macro_iou = tp_total / (macro_union + epsilon)
@@ -50,17 +58,49 @@ def calculate_metrics_from_totals(tp_total, fp_total, fn_total, tn_total) -> Dic
     return {
         "dice": macro_dice, "iou": macro_iou, "sensitivity": macro_sensitivity,
         "specificity": macro_specificity, "accuracy": macro_accuracy
+    }'''
+
+#改后
+def calculate_metrics_from_totals(tp_total, fp_total, fn_total, tn_total) -> Dict[str, float]:
+    # 核心：在运算前将所有累加值转为 64位浮点数
+    tp = float(tp_total)
+    fp = float(fp_total)
+    fn = float(fn_total)
+    tn = float(tn_total)
+
+    epsilon = 1e-8
+
+    # 重新计算（确保结果在 0-1 之间）
+    macro_dice = (2. * tp) / (2 * tp + fp + fn + epsilon)
+    macro_union = tp + fp + fn
+    macro_iou = tp / (macro_union + epsilon)
+    macro_sensitivity = tp / (tp + fn + epsilon)
+    macro_specificity = tn / (tn + fp + epsilon)
+    macro_accuracy = (tp + tn) / (tp + tn + fp + fn + epsilon)
+
+    return {
+        "dice": macro_dice,
+        "iou": macro_iou,
+        "sensitivity": macro_sensitivity,
+        "specificity": macro_specificity,
+        "accuracy": macro_accuracy
     }
 
-
 def evaluate_folder_macro(masks_dir: Path, gt_dir: Path) -> Dict[str, float]:
-    total_tp, total_fp, total_fn, total_tn = 0, 0, 0, 0
+    #total_tp, total_fp, total_fn, total_tn = 0, 0, 0, 0
+    # 改后
+    total_tp = np.int64(0)
+    total_fp = np.int64(0)
+    total_fn = np.int64(0)
+    total_tn = np.int64(0)
+
     processed_count = 0
     mask_files = sorted([f for f in masks_dir.iterdir() if f.is_file() and f.suffix.lower() == '.jpg'])
 
     print(f"\n正在对 {len(mask_files)} 个掩码进行宏观评测...")
     for mask_file in tqdm(mask_files, desc="评测掩码 (宏观)"):
-        gt_file = gt_dir / f"{mask_file.stem}.jpg"
+        #gt_file = gt_dir / f"{mask_file.stem}.jpg"
+        gt_file = gt_dir / f"{mask_file.stem}_segmentation.png" #改后
         if not gt_file.exists():
             gt_file = gt_dir / mask_file.name
             if not gt_file.exists():
@@ -140,7 +180,8 @@ def main():
             with torch.inference_mode(), torch.autocast(DEVICE, dtype=torch.bfloat16):
                 sam2_predictor.set_image(image)
 
-                prompt_file = PROMPT_DIR / f"{image_path.stem}.txt"
+                #prompt_file = PROMPT_DIR / f"{image_path.stem}.txt"
+                prompt_file = PROMPT_DIR / f"{image_path.stem}_segmentation.txt" #改后
                 box_prompts = load_prompts(prompt_file)
 
                 best_mask = None
@@ -151,7 +192,8 @@ def main():
                     )
                     best_mask = masks[np.argmax(scores)]
                 else:
-                    gt_path = GT_DIR / f"{image_path.stem}.jpg"
+                    #gt_path = GT_DIR / f"{image_path.stem}.jpg"
+                    gt_path = GT_DIR / f"{image_path.stem}_segmentation.png" #改后
                     if not gt_path.exists():
                         gt_path = GT_DIR / image_path.name
                         if not gt_path.exists():
