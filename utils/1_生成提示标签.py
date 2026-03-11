@@ -71,9 +71,13 @@ def find_and_save_scaled_bbox(src_folder, dest_folder, scale_factor=1.1):
 
 
 if __name__ == "__main__":
-    folder_mapping = {
-        r"D:\Datasets\ISIC2018\test\groundtruth": r"D:\Datasets\MedSAM_Prompts\ISIC_2018",
+    '''folder_mapping = {
+        r"D:/Datasets/ISIC2018/test/groundtruth": r"D:\Datasets\MedSAM_Prompts\ISIC_2018",
         r"D:\Datasets\BraTS\BraTS_test\masks": r"D:\Datasets\MedSAM_Prompts\BrainTS"
+    }'''
+
+    folder_mapping = {
+        r"E:/Datasets/ISIC2018/test/groundtruth": r"E:/Datasets/ISIC2018/test/prompts"
     }
 
     for src, dest in folder_mapping.items():
