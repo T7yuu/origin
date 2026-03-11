@@ -8,7 +8,7 @@ data_paths:
   output_dir: "E:/PythonD/ERA/scripts/V9/outputs"     #运行结果
   log_file: "E:/PythonD/ERA/scripts/V9/outputs/logs/main_process.log"     #日志
   knowledge_base_json: "E:/PythonD/ERA/scripts/V9/scripts/unified_medical_kb.json"
-  feature_matrix_path: "E:/PythonD/ERA/scripts/V9/scirpts/outputs_medical/medical_features.npz"
+  feature_matrix_path: "E:/PythonD/ERA/scripts/V9/scripts/outputs_medical/medical_features.npz"
    #knowledge_base_json 和 feature_matrix_path：这两项指向 RAG（检索增强）的知识库。如果你还没运行构建知识库的脚本，需要先指定好未来生成的 json 和 npz 文件存放位置。
 evaluation_configs:
   enable_visualization: false
